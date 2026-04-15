@@ -12,9 +12,26 @@ SERVER_CONTAINER="wordbox-server"
 CLIENT_PORT="5000"
 SERVER_PORT="5002"
 
+read_env_value() {
+  local env_file="$1"
+  local key="$2"
+
+  if [[ ! -f "${env_file}" ]]; then
+    return 0
+  fi
+
+  grep -E "^${key}=" "${env_file}" | tail -n 1 | cut -d '=' -f 2- | sed 's/^["'\'']//; s/["'\'']$//'
+}
+
+CLIENT_API_URL="${CLIENT_API_URL:-$(read_env_value "${ROOT_DIR}/client/.env" "API")}"
+CLIENT_API_URL="${CLIENT_API_URL:-https://apiwordbox.astrocoder.uz/}"
+
+SERVER_CLIENT_ORIGIN="${SERVER_CLIENT_ORIGIN:-$(read_env_value "${ROOT_DIR}/server/.env" "CLIENT_ORIGIN")}"
+SERVER_CLIENT_ORIGIN="${SERVER_CLIENT_ORIGIN:-http://localhost:${CLIENT_PORT}}"
+
 echo "Docker image'lar build qilinmoqda..."
 docker build \
-  --build-arg API="http://localhost:${SERVER_PORT}" \
+  --build-arg API="${CLIENT_API_URL}" \
   -t "${CLIENT_IMAGE}" "${ROOT_DIR}/client"
 docker build -t "${SERVER_IMAGE}" "${ROOT_DIR}/server"
 
@@ -35,7 +52,7 @@ recreate_container \
   "${SERVER_CONTAINER}" \
   -p "${SERVER_PORT}:${SERVER_PORT}" \
   -e PORT="${SERVER_PORT}" \
-  -e CLIENT_ORIGIN="http://localhost:${CLIENT_PORT}" \
+  -e CLIENT_ORIGIN="${SERVER_CLIENT_ORIGIN}" \
   "${SERVER_IMAGE}"
 
 echo "Client container ishga tushirilmoqda..."
@@ -48,3 +65,4 @@ recreate_container \
 echo "Tayyor:"
 echo "Client: http://localhost:${CLIENT_PORT}"
 echo "Server: http://localhost:${SERVER_PORT}"
+echo "Frontend API: ${CLIENT_API_URL}"
