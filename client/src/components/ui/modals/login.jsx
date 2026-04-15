@@ -6,14 +6,14 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import { uselogin } from '@/hooks/auth';
+import { useLogin } from '@/hooks/auth';
 import { useRouter } from 'next/navigation';
 
 
 // style will be set dynamically based on screen size
 
 export default function Login({ children }) {
-  const loginMutation = uselogin(); // api hoks login
+  const loginMutation = useLogin(); // api hoks login
   const isMobile = useMediaQuery({ maxWidth: 600 });
   const modalStyle = isMobile
     ? {

@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useGetNotify } from "./notify";
 import { instance } from "./api";
-const notify = useGetNotify();
 
 const register = async (registerdata) => {
     const response = await instance.post('/api/auth/register', registerdata);
@@ -10,6 +9,7 @@ const register = async (registerdata) => {
 }
 
 export const useRegister = () => {
+    const notify = useGetNotify();
     const registerMutation = useMutation({
         mutationFn: register,
         mutationKey: ['register'],
@@ -30,7 +30,8 @@ const login = async ({ formData }) => {
     return response.data
 }
 
-export const uselogin = () => {
+export const useLogin = () => {
+    const notify = useGetNotify();
     const loginMutation = useMutation({
         mutationFn: login,
         mutationKey: ['login'],
@@ -62,5 +63,4 @@ export const useUserMe = () => {
     })
     return { data, isLoading, error }
 }
-
 

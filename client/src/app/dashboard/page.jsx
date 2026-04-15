@@ -9,14 +9,14 @@ import {
   useAddLesson,
   useAdminStats,
   useDeleteLesson,
-  usegetAllLessons,
+  useGetAllLessons,
 } from "@/hooks/lessons";
 import { instance } from "@/hooks/api";
 import Loader from "@/components/ui/loaders/Loader";
 import NotifiModal from "@/components/ui/modals/NotifiModal";
 import { usegetStats } from "@/hooks/words";
 export default function Dashboard() {
-  const { data, isLoading, error } = usegetAllLessons();
+  const { data, isLoading, error } = useGetAllLessons();
   const lessons = data?.lessons;
   const lessonMutation = useAddLesson();
 

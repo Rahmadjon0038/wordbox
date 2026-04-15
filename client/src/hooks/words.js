@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { instance } from "./api";
 import { useGetNotify } from "./notify";
-const notify = useGetNotify();
 
 // ---------------- ADD WORDS ----------------------
 
@@ -10,8 +9,9 @@ const addWords = async ({ id, newEntry }) => {
     return response.data
 }
 
-export const useaddWords = () => {
+export const useAddWords = () => {
     const queryClient = useQueryClient();
+    const notify = useGetNotify();
 
     const addWordsMutation = useMutation({
         mutationFn: addWords,
@@ -37,7 +37,7 @@ const getWords = async ({ queryKey }) => {
     return response.data
 }
 
-export const usegetWords = (id) => {
+export const useGetWords = (id) => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['wodrs', id],
         queryFn: getWords,
@@ -54,8 +54,9 @@ const deleteWord = async (id) => {
     return response.data
 }
 
-export const usedeleteWord = () => {
+export const useDeleteWord = () => {
     const queryClient = useQueryClient();
+    const notify = useGetNotify();
 
     const deleteWordMutation = useMutation({
         mutationFn: deleteWord,
@@ -82,8 +83,9 @@ const editWord = async ({ id, newWord }) => {
     return response.data
 }
 
-export const useeditWord = () => {
+export const useEditWord = () => {
     const queryClient = useQueryClient();
+    const notify = useGetNotify();
 
     const editWordMutation = useMutation({
         mutationFn: editWord,

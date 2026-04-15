@@ -2,13 +2,13 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { usenotPractikeWords, useupdateword } from "@/hooks/lessons";
+import { useNotPractikeWords, useUpdateWord } from "@/hooks/lessons";
 import { CheckCircle, XCircle, BookOpen, ArrowLeftCircle } from "lucide-react";
 import Loader from "@/components/ui/loaders/Loader";
 
 export default function NotLearnedPage() {
   const { id } = useParams();
-  const { data, isLoading } = usenotPractikeWords(id);
+  const { data, isLoading } = useNotPractikeWords(id);
   // So'zlar ro'yxatini local state'da bir marta saqlab qo'yamiz (backend yangilansa ham yo'qolmaydi)
   const allWords = useMemo(
     () =>
@@ -18,7 +18,7 @@ export default function NotLearnedPage() {
     [data]
   );
 
-  const updatewordMutation = useupdateword();
+  const updatewordMutation = useUpdateWord();
   const [mode, setMode] = useState(null); // 'en-uz' yoki 'uz-en'
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");

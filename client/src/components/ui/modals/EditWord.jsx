@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useState, useEffect } from 'react';
-import { useeditWord } from '@/hooks/words';
+import { useEditWord } from '@/hooks/words';
 
 const style = {
   position: 'absolute',
@@ -20,7 +20,7 @@ const style = {
 
 export default function EditWord({ word, children }) {
   const [open, setOpen] = useState(false);
-  const editWordMutation = useeditWord();
+  const editWordMutation = useEditWord();
 
   const [newWord, setNewWord] = useState({
     english: '',

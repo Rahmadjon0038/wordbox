@@ -4,19 +4,19 @@ import { Switch } from '@headlessui/react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { useaddWords, usedeleteWord, usegetWords } from '@/hooks/words'
+import { useAddWords, useDeleteWord, useGetWords } from '@/hooks/words'
 import Loader from '@/components/ui/loaders/Loader'
 import { Pencil, Trash2, Volume2, SpellCheck, Menu } from "lucide-react";
 import EditWord from '@/components/ui/modals/EditWord'
-import { usegetLessonId } from '@/hooks/lessons'
+import { useGetLessonId } from '@/hooks/lessons'
 
 export default function LessonPage() {
     const { id } = useParams()
-    const addWordsMutation = useaddWords()
-    const { data, isLoading } = usegetWords(id)
-    const deleteWordMutation = usedeleteWord()
+    const addWordsMutation = useAddWords()
+    const { data, isLoading } = useGetWords(id)
+    const deleteWordMutation = useDeleteWord()
 
-    const { data: lessonName, isLoading: lessonNameLoading, error, refetch } = usegetLessonId(id)
+    const { data: lessonName, isLoading: lessonNameLoading, error, refetch } = useGetLessonId(id)
 
     const words = data?.words
     const [filter, setFilter] = useState('all')

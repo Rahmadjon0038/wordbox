@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { instance } from "./api";
 import { useGetNotify } from "./notify";
-const notify = useGetNotify();
 
 // ---------------- ADD LESSONS ----------------------
 const register = async ({ lessondata }) => {
@@ -12,6 +11,7 @@ const register = async ({ lessondata }) => {
 
 export const useAddLesson = () => {
     const queryClient = useQueryClient();
+    const notify = useGetNotify();
     const lessonMutation = useMutation({
         mutationFn: register,
         mutationKey: ['lessons'],
@@ -37,7 +37,7 @@ const getAllLessons = async () => {
     return response.data
 }
 
-export const usegetAllLessons = () => {
+export const useGetAllLessons = () => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['lessons'],
         queryFn: getAllLessons,
@@ -52,7 +52,7 @@ const getLessonId = async ({ queryKey }) => {
     return response.data
 }
 
-export const usegetLessonId = (id) => {
+export const useGetLessonId = (id) => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['lessons-id',id],
         queryFn: getLessonId,
@@ -86,6 +86,7 @@ const deleteLesson = async ({ id }) => {
 
 export const useDeleteLesson = () => {
     const queryClient = useQueryClient();
+    const notify = useGetNotify();
 
     const deleteLessonMutation = useMutation({
         mutationFn: deleteLesson,
@@ -113,7 +114,7 @@ const getLessonPractice = async ({ queryKey }) => {
     return response.data
 }
 
-export const usegetLessonPractice = (id) => {
+export const useGetLessonPractice = (id) => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['lessons', id],
         queryFn: getLessonPractice,
@@ -130,7 +131,7 @@ const notPractikeWords = async ({ queryKey }) => {
     return response.data
 }
 
-export const usenotPractikeWords = (id) => {
+export const useNotPractikeWords = (id) => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['lessons', id],
         queryFn: notPractikeWords,
@@ -148,7 +149,7 @@ const updateword = async ({ id, learned }) => {
     return response.data
 }
 
-export const useupdateword = () => {
+export const useUpdateWord = () => {
     const queryClient = useQueryClient();
     const updatewordMutation = useMutation({
         mutationFn: updateword,
@@ -164,7 +165,6 @@ export const useupdateword = () => {
     })
     return updatewordMutation
 }
-
 
 
 

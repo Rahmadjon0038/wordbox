@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { usegetLessonPractice, useupdateword } from "@/hooks/lessons";
+import { useGetLessonPractice, useUpdateWord } from "@/hooks/lessons";
 import { useParams } from "next/navigation";
 import {
   BookOpen,
@@ -25,14 +25,14 @@ function shuffleArray(array) {
 
 export default function PracticePage() {
   const { id } = useParams();
-  const { data, isLoading } = usegetLessonPractice(id);
+  const { data, isLoading } = useGetLessonPractice(id);
 
   const words = useMemo(() => {
     if (!data?.words) return [];
     return shuffleArray([...data.words]);
   }, [data?.words?.length]);
 
-  const updatewordMutation = useupdateword();
+  const updatewordMutation = useUpdateWord();
 
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
