@@ -7,7 +7,7 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-ARG API=http://localhost:5002
+ARG API=https://apiwordbox.astrocoder.uz/
 ENV API=$API
 
 COPY --from=deps /app/node_modules ./node_modules

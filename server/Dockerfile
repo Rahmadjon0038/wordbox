@@ -8,7 +8,7 @@ COPY . .
 
 ENV NODE_ENV=production
 ENV PORT=5002
-ENV CLIENT_ORIGIN=http://localhost:5000
+ENV CLIENT_ORIGIN=http://localhost:5000,https://wordbox.astrocoder.uz/
 
 EXPOSE 5002
 

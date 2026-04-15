@@ -16,7 +16,7 @@ instance.interceptors.request.use(
   (error) => {
     console.log("Request xatosi:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 instance.interceptors.response.use(
@@ -47,5 +47,5 @@ instance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
