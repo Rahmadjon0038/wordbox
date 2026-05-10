@@ -3,6 +3,9 @@ const router = express.Router();
 const wordController = require('../controllers/wordController');
 const authMiddleware = require('../midlwares/authMidlwares');
 
+// Bulk so‘zlar qo‘shish
+router.post('/:lessonId/bulk', authMiddleware, wordController.createWordsBulk);
+
 // Yangi so‘z qo‘shish
 router.post('/:lessonId', authMiddleware, wordController.createWord);
 

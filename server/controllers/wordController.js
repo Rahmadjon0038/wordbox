@@ -1,4 +1,5 @@
 const Word = require('../models/wordModel');
+const Lesson = require('../models/lessonModel');
 
 // Yangi so‘z qo‘shish
 exports.createWord = (req, res) => {
@@ -13,6 +14,61 @@ exports.createWord = (req, res) => {
   Word.create(userId, lessonId, { english, uzbek, example, exampleUz }, (err, word) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(201).json({ message: "So‘z qo‘shildi", word });
+  });
+};
+
+// Bulk so‘zlar qo‘shish
+exports.createWordsBulk = (req, res) => {
+  const userId = req.user.id;
+  const { lessonId } = req.params;
+  const { words } = req.body;
+
+  const parsedLessonId = Number.parseInt(lessonId, 10);
+  if (!Number.isFinite(parsedLessonId)) {
+    return res.status(400).json({ error: "lessonId noto‘g‘ri" });
+  }
+
+  if (!Array.isArray(words)) {
+    return res.status(400).json({ error: "`words` массив bo‘lishi kerak" });
+  }
+  if (words.length === 0) {
+    return res.status(400).json({ error: "`words` bo‘sh bo‘lmasin" });
+  }
+  if (words.length > 1000) {
+    return res.status(400).json({ error: "`words` maksimum 1000 ta bo‘lishi mumkin" });
+  }
+
+  const errors = [];
+  const normalized = words.map((w, index) => {
+    const english = typeof w?.english === "string" ? w.english.trim() : "";
+    const uzbek = typeof w?.uzbek === "string" ? w.uzbek.trim() : "";
+    const example = typeof w?.example === "string" ? w.example : undefined;
+    const exampleUz = typeof w?.exampleUz === "string" ? w.exampleUz : undefined;
+
+    if (!english) errors.push({ index, field: "english", message: "Majburiy" });
+    if (!uzbek) errors.push({ index, field: "uzbek", message: "Majburiy" });
+
+    return { english, uzbek, example, exampleUz };
+  });
+
+  if (errors.length) {
+    return res.status(400).json({ error: "Validatsiya xatosi", errors });
+  }
+
+  // Dars userga tegishli ekanligini tekshiramiz
+  Lesson.getById(parsedLessonId, userId, (err, lesson) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!lesson) return res.status(404).json({ error: "Dars topilmadi" });
+
+    Word.createBulk(userId, parsedLessonId, normalized, (bulkErr, result) => {
+      if (bulkErr) return res.status(500).json({ error: bulkErr.message });
+      res.status(201).json({
+        message: "So‘zlar qo‘shildi",
+        lessonId: parsedLessonId,
+        inserted: result.inserted,
+        words: result.words
+      });
+    });
   });
 };
 

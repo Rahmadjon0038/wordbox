@@ -36,6 +36,76 @@ const Word = {
     });
   },
 
+  createBulk: (userId, lessonId, words, callback) => {
+    if (!Array.isArray(words) || words.length === 0) {
+      return callback(new Error("words массив bo‘lishi va bo‘sh bo‘lmasligi kerak"));
+    }
+
+    const sql = `
+      INSERT INTO words (lessonId, userId, english, uzbek, example, exampleUz, learned)
+      VALUES (?, ?, ?, ?, ?, ?, 0)
+    `;
+
+    db.serialize(() => {
+      db.run("BEGIN TRANSACTION");
+
+      const stmt = db.prepare(sql);
+      const insertedWords = [];
+      let remaining = words.length;
+      let finished = false;
+
+      const doneOnce = (err, result) => {
+        if (finished) return;
+        finished = true;
+        callback(err, result);
+      };
+
+      const rollback = (err) => {
+        try {
+          stmt.finalize(() => {
+            db.run("ROLLBACK", () => doneOnce(err));
+          });
+        } catch (_) {
+          db.run("ROLLBACK", () => doneOnce(err));
+        }
+      };
+
+      words.forEach((word) => {
+        const english = word.english;
+        const uzbek = word.uzbek;
+        const example = word.example ?? null;
+        const exampleUz = word.exampleUz ?? null;
+
+        stmt.run([lessonId, userId, english, uzbek, example, exampleUz], function (err) {
+          if (finished) return;
+          if (err) return rollback(err);
+
+          insertedWords.push({
+            id: this.lastID,
+            lessonId,
+            userId,
+            english,
+            uzbek,
+            example: word.example,
+            exampleUz: word.exampleUz,
+            learned: 0
+          });
+
+          remaining -= 1;
+          if (remaining === 0) {
+            stmt.finalize((finalizeErr) => {
+              if (finalizeErr) return rollback(finalizeErr);
+              db.run("COMMIT", (commitErr) => {
+                if (commitErr) return rollback(commitErr);
+                doneOnce(null, { inserted: insertedWords.length, words: insertedWords });
+              });
+            });
+          }
+        });
+      });
+    });
+  },
+
   getByLessonId: (lessonId, userId, callback) => {
     const sql = `SELECT * FROM words WHERE lessonId = ? AND userId = ?`;
     db.all(sql, [lessonId, userId], (err, rows) => {
